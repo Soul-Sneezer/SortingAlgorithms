@@ -7,18 +7,34 @@
 template <typename T1, typename T>
 void radixSort(std::vector<T>& arr , const int bits) {
   std::queue<T> q_zeros, q_ones;
-  T1 mask = 1;
   const long long N = arr.size();
-  for (int j = 0; j < bits; j++) {
-    for (long long i = 0; i < N; i++) {
-      auto val = std::bit_cast<T1>(arr[i]);
-      val ^= 1 << (bits - 1);
-      if (arr[i] < 0)
-        val = !val;
 
-      if (val & mask) {
+  for (int j = 0; j < bits; j++) 
+  {
+    for (long long i = 0; i < N; i++) 
+    {
+      T1 mask = 1 << j;
+      auto val = std::bit_cast<T1>(arr[i]);
+      if (arr[i] < 0.0)
+      {
+        if(bits == 32)
+        {
+          val ^= 0xFFFFFFFF;
+        }
+        else if(bits == 64)
+        {
+          val ^= 0xFFFFFFFFFFFFFFFF;
+        }
+      }
+      else
+        val ^= 1 << (bits - 1);
+      
+      if (val & mask) 
+      {
         q_ones.push(arr[i]);
-      } else {
+      } 
+      else 
+      {
         q_zeros.push(arr[i]);
       }
     }
@@ -32,7 +48,5 @@ void radixSort(std::vector<T>& arr , const int bits) {
       arr[i++] = q_ones.front();
       q_ones.pop();
     }
-
-    mask <<= 1;
   }
 }
