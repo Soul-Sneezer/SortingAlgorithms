@@ -9,6 +9,7 @@
 #include "merge_sort.h"
 #include "tim_sort.h"
 #include "radix_fun.h"
+#include "bucket_sort.h"
 
 enum
 {
@@ -21,12 +22,13 @@ enum
 	ALGO_DEFAULT,
 };
 
-static void generateRealNumbers(std::vector<double>& v, const long long N, const long long nrMax)
+static void generateRealNumbers(std::vector<float>& v, const long long N, const long long nrMax)
 {
 	std::random_device rd;  
   std::mt19937 gen(rd()); 
-  std::uniform_real_distribution<> dis((double)(-nrMax), (double)nrMax);
-  for (long long i = 0; i < N; i++)
+  std::uniform_real_distribution<> dis((float)(-nrMax), (float)nrMax);
+  
+	for (long long i = 0; i < N; i++)
 	{
     v[i] =  dis(gen);
 	}
@@ -57,6 +59,8 @@ template<typename T> bool checkResult(std::vector<T>& orig, std::vector<T>& resu
 
 	std::sort(orig.begin(), orig.end());
 	return orig == result;
+
+	return true;
 }
 
 static void runTest(std::ostream& os, const long long N, const long long nrMax, const int nrAlgo, bool def = false, bool rev = false)
@@ -68,7 +72,7 @@ static void runTest(std::ostream& os, const long long N, const long long nrMax, 
 	}
 
 	std::vector<long long> nrNat(N);
-	std::vector<double> nrReale(N);
+	std::vector<float> nrReale(N);
 
 	if(!def)
 	{
@@ -82,18 +86,18 @@ static void runTest(std::ostream& os, const long long N, const long long nrMax, 
 			if(!rev)
 			{
 				nrNat[i] = i + 1;
-				nrReale[i] = (double)nrNat[i];
+				nrReale[i] = (float)nrNat[i];
 			}
 			else
 			{
 				nrNat[i] = N - i;
-				nrReale[i] = (double)nrNat[i];
+				nrReale[i] = (float)nrNat[i];
 			}
 		}
 	}
 
 	std::vector<long long> nrNatCopy= nrNat;
-	std::vector<double> nrRealeCopy= nrReale;
+	std::vector<float> nrRealeCopy= nrReale;
 	
 	auto start = std::chrono::steady_clock::now();
 	switch(nrAlgo)
@@ -114,12 +118,10 @@ static void runTest(std::ostream& os, const long long N, const long long nrMax, 
 			os<<"Tim sort for natural numbers:\n";
 			timSort(nrNat);
 			break;
-			/*
 		case ALGO_BUCKET:
 			os<<"Bucket sort for natural numbers:\n";
 			bucketSort(nrNat);
 			break;
-			*/
 		case ALGO_RADIX:
 			os<<"Radix sort for natural numbers:\n";
 			radixSort<long long, long long>(nrNat, 64);
@@ -133,7 +135,7 @@ static void runTest(std::ostream& os, const long long N, const long long nrMax, 
 	if(!checkResult(nrNatCopy, nrNat, N))
 		os<<"!Test esuat!\n\n";
 	
-	double elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
+	float elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
 	os<<elapsed_seconds<<"\n";
 	
 	start = std::chrono::steady_clock::now();
@@ -156,15 +158,13 @@ static void runTest(std::ostream& os, const long long N, const long long nrMax, 
 			os<<"Tim sort for real numbers:\n";
 			timSort(nrReale);
 			break;
-			/*
 		case ALGO_BUCKET:
 			os<<"Bucket sort for real numbers:\n";
 			bucketSort(nrReale);
 			break;
-			*/
 		case ALGO_RADIX:
 			os<<"Radix sort for real numbers:\n";
-			radixSort<long long>(nrReale, 64);
+			radixSort<unsigned int, float>(nrReale, 64);
 			break;
 		case ALGO_DEFAULT:
 			os<<"Standard library sort for real numbers: \n";
@@ -175,7 +175,7 @@ static void runTest(std::ostream& os, const long long N, const long long nrMax, 
 	if(!checkResult(nrRealeCopy, nrReale, N))
 		os<<"!Test esuat!\n\n";
 	
-	elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
+	elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count();
 	os<< elapsed_seconds<<"\n";
 }
 
