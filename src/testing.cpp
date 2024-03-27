@@ -22,8 +22,11 @@ enum
 	ALGO_DEFAULT,
 };
 
-static void generateRealNumbers(std::vector<float>& v, const long long N, const long long nrMax)
+static bool generateRealNumbers(std::vector<float>& v, const long long N, const long long nrMax)
 {
+	auto start = std::chrono::steady_clock::now();
+	auto finish = std::chrono::steady_clock::now();
+
 	std::random_device rd;  
   std::mt19937 gen(rd()); 
   std::uniform_real_distribution<> dis((float)(-nrMax), (float)nrMax);
@@ -31,11 +34,22 @@ static void generateRealNumbers(std::vector<float>& v, const long long N, const 
 	for (long long i = 0; i < N; i++)
 	{
     v[i] =  dis(gen);
+		finish = std::chrono::steady_clock::now();
+		if(std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() > 60.0)
+		{
+			printf("Test took longer than 1 minute. Process terminated.\n");
+			return false;
+		}
 	}
+
+	return true;
 }
 
-static void generateNumbers(std::vector<long long>& v, const long long N, const long long nrMax)
+static bool generateNumbers(std::vector<long long>& v, const long long N, const long long nrMax)
 {
+	auto start = std::chrono::steady_clock::now();
+	auto finish = std::chrono::steady_clock::now();
+
 	std::random_device rd;
   std::mt19937 gen(rd()); 
   std::uniform_int_distribution<> distr(0, nrMax); 
@@ -43,7 +57,15 @@ static void generateNumbers(std::vector<long long>& v, const long long N, const 
   for(long long i = 0; i < N; i++)
 	{
     v[i] = distr(gen);
+		finish = std::chrono::steady_clock::now();
+		if(std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() > 60.0)
+		{
+			printf("Test took longer than 1 minute. Process terminated.\n");
+			return false;
+		}
 	}
+
+	return true;
 }
 
 template<typename T> bool checkResult(std::vector<T>& orig, std::vector<T>& result, const long long N)
@@ -76,8 +98,10 @@ static void runTest(std::ostream& os, const long long N, const long long nrMax, 
 
 	if(!def)
 	{
-		generateNumbers(nrNat, N, nrMax);
-		generateRealNumbers(nrReale, N, nrMax);
+		if(!generateNumbers(nrNat, N, nrMax))
+			return;
+		if(!generateRealNumbers(nrReale, N, nrMax))
+			return;
 	}
 	else
 	{

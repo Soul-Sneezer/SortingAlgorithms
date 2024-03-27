@@ -3,14 +3,23 @@
 #include <iostream>
 #include <queue>
 #include <vector>
+#include <chrono>
 
 template <typename T1, typename T>
 void radixSort(std::vector<T>& arr , const int bits) {
   std::queue<T> q_zeros, q_ones;
   const long long N = arr.size();
 
+  auto start = std::chrono::steady_clock::now();
+  auto finish = std::chrono::steady_clock::now();
   for (int j = 0; j < bits; j++) 
   {
+    finish = std::chrono::steady_clock::now();
+    if(std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() > 60.0)
+    {  
+      printf("Test took longer than a minute. Process terminated.");
+      return;
+    }
     for (long long i = 0; i < N; i++) 
     {
       T1 mask = 1 << j;
