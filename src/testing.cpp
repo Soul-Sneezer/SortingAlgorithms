@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "heap_fun.h"
 #include "shell_fun.h"
+#include "merge_sort.h"
 
 enum
 {
@@ -45,9 +46,23 @@ template<typename T> bool checkResult(std::vector<T>& result, std::unordered_map
 {
 	for(int i = 0; i < N; i++)
 	{
-		if(!orig[result[i]]) 
+		if(orig[result[i]] == false)
 			return false;
+		orig[result[i]] = false;
 	}
+
+	std::map<std::T, bool>::iterator it  = orig.begin(); 
+  
+	while (it != orig.end()) 
+	{ 
+			T word = it->first; 
+			bool count = it->second;
+			
+			if(orig[word] != false)
+				return false;
+
+			it++; 
+	} 
 
 	return true;
 }
@@ -87,11 +102,11 @@ static void runTest(std::ostream& os, const int N, const int nrMax, const int nr
 			os<<"Shell sort for natural numbers:\n";
 			shellSort(nrNat);
 			break;
-			/*
 		case ALGO_MERGE:
 			os<<"Merge sort for natural numbers:\n";
 			mergeSort(nrNat);
 			break;
+		/*
 		case ALGO_TIM:
 			os<<"Tim sort for natural numbers:\n";
 			timSort(nrNat);
@@ -125,11 +140,11 @@ static void runTest(std::ostream& os, const int N, const int nrMax, const int nr
 			os<<"Shell sort for real numbers:\n";
 			shellSort(nrReale);
 			break;
-			/*
 		case ALGO_MERGE:
 			os<<"Merge sort for real numbers:\n";
 			mergeSort(nrReale);
 			break;
+			/*
 		case ALGO_TIM:
 			os<<"Tim sort for real numbers:\n";
 			timSort(nrReale);
