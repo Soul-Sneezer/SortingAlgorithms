@@ -4,11 +4,11 @@
 
 #include "Merge_sort.h"
 
-void Merge_sort::insertionSort(std::vector<int>& arr, int left, int right) {
+template <typename T> void Merge_sort::insertionSort(std::vector<T>& arr, int left, int right) {
 
     for (int i = left + 1; i <= right; i++) {
 
-        int key = arr[i];
+        T key = arr[i];
         int j = i - 1;
 
         while (j >= left && arr[j] > key) {
@@ -21,7 +21,7 @@ void Merge_sort::insertionSort(std::vector<int>& arr, int left, int right) {
     }
 }
 
-void Merge_sort::merge(std::vector<int>& arr, std::vector<int>& temp, int left, int mid, int right) {
+template <typename T> void Merge_sort::merge(std::vector<T>& arr, std::vector<T>& temp, int left, int mid, int right) {
 
     std::copy(arr.begin() + left, arr.begin() + right + 1, temp.begin() + left);
 
@@ -41,7 +41,7 @@ void Merge_sort::merge(std::vector<int>& arr, std::vector<int>& temp, int left, 
     }
 }
 
-void  Merge_sort::mergeSortUtil(std::vector<int>& arr, std::vector<int>& temp, int left, int right) {
+template <typename T> void  Merge_sort::mergeSortUtil(std::vector<T>& arr, std::vector<T>& temp, int left, int right) {
 
     if (left < right) {
         if (right - left <= 10) {
@@ -58,9 +58,9 @@ void  Merge_sort::mergeSortUtil(std::vector<int>& arr, std::vector<int>& temp, i
     }
 }
 
-void Merge_sort::mergeSort(std::vector<int>& arr) {
+template <typename T> void Merge_sort::mergeSort(std::vector<T>& arr) {
 
-    std::vector<int> temp(arr.size());
+    std::vector<T> temp(arr.size());
 
     mergeSortUtil(arr, temp, 0, arr.size() - 1);
 }
