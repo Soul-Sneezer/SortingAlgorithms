@@ -41,7 +41,7 @@ static void generateNumbers(std::vector<int>& v, const int N, const int nrMax)
 	}
 }
 
-static template<typename T> bool checkResult(std::vector<T>& result, std::unordered_map<T, bool>& orig, const int N)
+template<typename T> bool checkResult(std::vector<T>& result, std::unordered_map<T, bool>& orig, const int N)
 {
 	for(int i = 0; i < N; i++)
 	{
@@ -59,9 +59,9 @@ static void runTest(std::ostream& os, const int N, const int nrMax, const int nr
 		os << "Unknown algorithm.";
 		return;
 	}
-	std::vector<int> nrNat;
+	std::vector<int> nrNat(N);
 	std::unordered_map<int, bool> nrNatMap;
-	std::vector<double> nrReale;
+	std::vector<double> nrReale(N);
 	std::unordered_map<double, bool> nrRealeMap;
 
 	generateNumbers(nrNat, N, nrMax);
@@ -110,29 +110,36 @@ static void runTest(std::ostream& os, const int N, const int nrMax, const int nr
 			std::sort(nrNat.begin(), nrNat.end());
 	}
 	auto finish = std::chrono::steady_clock::now();
-	checkResult(nrNat, nrNatMap, N);
+	if(!checkResult(nrNat, nrNatMap, N))
+		os<<"!Test esuat!\n\n";
 	double elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
 	os<<elapsed_seconds<<"\n";
 	start = std::chrono::steady_clock::now();
 	switch(nrAlgo)
 	{
 		case ALGO_HEAP:
+			os<<"Heap sort for real numbers:\n";
 			heapSort(nrReale);
 			break;
 		case ALGO_SHELL:
+			os<<"Shell sort for real numbers:\n";
 			shellSort(nrReale);
 			break;
 			/*
 		case ALGO_MERGE:
+			os<<"Merge sort for real numbers:\n";
 			mergeSort(nrReale);
 			break;
 		case ALGO_TIM:
+			os<<"Tim sort for real numbers:\n";
 			timSort(nrReale);
 			break;
 		case ALGO_BUCKET:
+			os<<"Bucket sort for real numbers:\n";
 			bucketSort(nrReale);
 			break;
 		case ALGO_RADIX:
+			os<<"Radix sort for real numbers:\n";
 			radixSort(nrReale);
 			break;
 			*/
@@ -141,7 +148,8 @@ static void runTest(std::ostream& os, const int N, const int nrMax, const int nr
 			std::sort(nrReale.begin(), nrReale.end());
 	}
 	finish = std::chrono::steady_clock::now();
-	checkResult(nrReale, nrRealeMap, N);
+	if(!checkResult(nrReale, nrRealeMap, N))
+		os<<"!Test esuat!\n\n";
 	elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
 	os<< elapsed_seconds<<"\n";
 }
@@ -165,7 +173,7 @@ void runTests(const char* inputFile, const char* outputFile = NULL, bool generat
 			else
 				out<<"Test "<<i<<".	"<<N<<" numere;	"<<nrMax<<" valoarea maxima\n";
 
-			for(int j = 0; j < 6; j++)
+			for(int j = 0; j < 7; j++)
 			{
 				if(outputFile != NULL)
 					runTest(out, N, nrMax, j);

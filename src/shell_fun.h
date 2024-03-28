@@ -6,7 +6,7 @@ template <typename T> void shellSort(T arr[], const int N)
 	{	
 		for (int i = gap; i < N; i+= 1)
 		{
-			int c = arr[i];
+			T c = arr[i];
 
 			int j;
 			for (j = i; j >= gap && arr[j - gap] > c; j -= gap)
@@ -26,7 +26,7 @@ template <typename T> void shellSort(std::vector<T>& v)
 	{	
 		for (int i = gap; i < N; i+= 1)
 		{
-			int c = v[i];
+			T c = v[i];
 
 			int j;
 			for (j = i; j >= gap && v[j - gap] > c; j -= gap)
