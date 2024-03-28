@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <random>
+#include <algorithm>
+#include <unordered_map>
 #include "heap_fun.h"
 #include "shell_fun.h"
 
@@ -13,109 +15,135 @@ enum
 	ALGO_TIM,
 	ALGO_BUCKET,
 	ALGO_RADIX,
+	ALGO_DEFAULT,
 };
 
-static double* generateRealNumbers(const int N, const int nrMax)
+static void generateRealNumbers(std::vector<double>& v, const int N, const int nrMax)
 {
-	double* arr = (double*)malloc(N * sizeof(double)); // check if allocation succeded
-	
 	std::random_device rd;  
   std::mt19937 gen(rd()); 
-  std::uniform_real_distribution<> dis(0.0, (double)nrMax);
+  std::uniform_real_distribution<> dis((double)(-nrMax), (double)nrMax);
   for (int i = 0; i < N; i++)
-    arr[i] =  dis(gen);
-
-	return arr;
+	{
+    v[i] =  dis(gen);
+	}
 }
 
-static int* generateNumbers(const int N, const int nrMax)
+static void generateNumbers(std::vector<int>& v, const int N, const int nrMax)
 {
-	int* arr = (int*)malloc(N *  sizeof(int)); // should check if allocation succeded
-
 	std::random_device rd;
   std::mt19937 gen(rd()); 
   std::uniform_int_distribution<> distr(0, nrMax); 
 
   for(int i = 0; i < N; i++)
-    arr[i] = distr(gen);
-
-	return arr;
+	{
+    v[i] = distr(gen);
+	}
 }
 
-void checkResult()
+static template<typename T> bool checkResult(std::vector<T>& result, std::unordered_map<T, bool>& orig, const int N)
 {
+	for(int i = 0; i < N; i++)
+	{
+		if(!orig[result[i]]) 
+			return false;
+	}
 
+	return true;
 }
 
 static void runTest(std::ostream& os, const int N, const int nrMax, const int nrAlgo)
 {
-	if(nrAlgo > 5)
+	if(nrAlgo > 6)
 	{
 		os << "Unknown algorithm.";
 		return;
 	}
+	std::vector<int> nrNat;
+	std::unordered_map<int, bool> nrNatMap;
+	std::vector<double> nrReale;
+	std::unordered_map<double, bool> nrRealeMap;
 
-	int* arr = generateNumbers(N, nrMax);
-	double* realArr = generateRealNumbers(N, nrMax);
+	generateNumbers(nrNat, N, nrMax);
+	for(int i = 0; i < N; i++)
+	{
+		nrNatMap[nrNat[i]] = true;
+	}
+
+	generateRealNumbers(nrReale, N, nrMax);
+	for(int i = 0; i < N; i++)
+	{
+		nrRealeMap[nrReale[i]] = true;
+	}
 
 	auto start = std::chrono::steady_clock::now();
 	switch(nrAlgo)
 	{
 		case ALGO_HEAP:
-			heapSort(arr, N);
+			os<<"Heap sort for natural numbers:\n";
+			heapSort(nrNat);
 			break;
 		case ALGO_SHELL:
-			shellSort(arr, N);
+			os<<"Shell sort for natural numbers:\n";
+			shellSort(nrNat);
 			break;
 			/*
 		case ALGO_MERGE:
-			mergeSort(arr, N);
+			os<<"Merge sort for natural numbers:\n";
+			mergeSort(nrNat);
 			break;
 		case ALGO_TIM:
-			timSort(arr, N);
+			os<<"Tim sort for natural numbers:\n";
+			timSort(nrNat);
 			break;
 		case ALGO_BUCKET:
-			bucketSort(arr, N);
+			os<<"Bucket sort for natural numbers:\n";
+			bucketSort(nrNat);
 			break;
 		case ALGO_RADIX:
-			radixSort(arr, N);
+			os<<"Radix sort for natural numbers:\n";
+			radixSort(nrNat);
 			break;
 			*/
+		case ALGO_DEFAULT:
+			os<<"Standard library sort for natural numbers: \n";
+			std::sort(nrNat.begin(), nrNat.end());
 	}
-	checkResult();
 	auto finish = std::chrono::steady_clock::now();
+	checkResult(nrNat, nrNatMap, N);
 	double elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
 	os<<elapsed_seconds<<"\n";
 	start = std::chrono::steady_clock::now();
 	switch(nrAlgo)
 	{
 		case ALGO_HEAP:
-			heapSort(arr, N);
+			heapSort(nrReale);
 			break;
 		case ALGO_SHELL:
-			shellSort(arr, N);
+			shellSort(nrReale);
 			break;
 			/*
 		case ALGO_MERGE:
-			mergeSort(arr, N);
+			mergeSort(nrReale);
 			break;
 		case ALGO_TIM:
-			timSort(arr, N);
+			timSort(nrReale);
 			break;
 		case ALGO_BUCKET:
-			bucketSort(arr, N);
+			bucketSort(nrReale);
 			break;
 		case ALGO_RADIX:
-			radixSort(arr, N);
+			radixSort(nrReale);
 			break;
 			*/
+		case ALGO_DEFAULT:
+			os<<"Standard library sort for real numbers: \n";
+			std::sort(nrReale.begin(), nrReale.end());
 	}
-	checkResult();
 	finish = std::chrono::steady_clock::now();
+	checkResult(nrReale, nrRealeMap, N);
 	elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
 	os<< elapsed_seconds<<"\n";
-	free(arr);
-	free(realArr);
 }
 
 void runTests(const char* inputFile, const char* outputFile = NULL, bool generate = true)
@@ -131,6 +159,11 @@ void runTests(const char* inputFile, const char* outputFile = NULL, bool generat
 		{
 			in >> N;
 			in >> nrMax;
+		
+			if(outputFile == NULL)
+				std::cout<<"Test "<<i<<".	"<<N<<" numere;	"<<nrMax<<" valoarea maxima\n";
+			else
+				out<<"Test "<<i<<".	"<<N<<" numere;	"<<nrMax<<" valoarea maxima\n";
 
 			for(int j = 0; j < 6; j++)
 			{
@@ -143,5 +176,6 @@ void runTests(const char* inputFile, const char* outputFile = NULL, bool generat
 	}
 	else // pentru fisiere cu valori pregenerate
 	{
+		// TO DO
 	}
 }
