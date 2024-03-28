@@ -4,5 +4,5 @@
 
 int main()
 {
-	runTests();
+	runTests("../tests/test1.in");
 }
