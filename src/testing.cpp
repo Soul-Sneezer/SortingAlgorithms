@@ -1,19 +1,62 @@
+#include <chrono>
 #include <fstream>
 #include "heap_fun.h"
 #include "shell_fun.h"
 
-static void generateRealNumbers(const int N, const int nrMax)
-{
+// TO DO:
+// finish number generation
+// properly measure time
+// show the results to screen(or a file)
 
+enum
+{
+	ALGO_HEAP,
+	ALGO_SHELL,
+	ALGO_MERGE,
+	ALGO_TIM,
+	ALGO_BUCKET,
+	ALGO_RADIX,
 }
 
-static void generateNumbers(const int N, const int nrMax)
+static double* generateRealNumbers(const int N, const int nrMax)
 {
+	double* arr = (double*)malloc(N * sizeof(double)); // check if allocation succeded
+}
+
+static int* generateNumbers(const int N, const int nrMax)
+{
+	int result = (int*)malloc(N *  sizeof(int)); // should check if allocation succeded
 }
 
 static void runTest(const int N, const int nrMax, const int nrAlgo)
 {
-	generateNumbers(N, nrMax);
+	int* arr = generateNumbers(N, nrMax);
+	
+	switch(nrAlgo)
+	{
+		case ALGO_HEAP:
+			heapSort(arr, N);
+			break;
+		case ALGO_SHELL:
+			shellSort(arr, N);
+			break;
+		case ALGO_MERGE:				
+			mergeSort(arr, N);
+			break;
+		case ALGO_TIM:
+			timSort(arr, N);
+			break;
+		case ALGO_BUCKET:
+			bucketSort(arr, N);
+			break;
+		case ALGO_RADIX:
+			radixSort(arr, N);
+			break;
+		default:
+			fprintf(stderr, "Unknown algorithm.");
+	}
+
+	free(arr);
 }
 
 void runTests(int nrAlgo, const char* inputFile, const char* outputFile = stdout, bool generate = true)
