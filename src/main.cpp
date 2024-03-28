@@ -8,11 +8,9 @@ using namespace std;
 
 int main(){
 
-    Merge_sort get_merged;
+    vector<double> a = {10,32,42,51,321.23,4213.43,4,412,321.43,4,123,4213.45,23,1};
 
-    vector<int> a = {10,32,42,51,321,4213,4,412,321,4,123,4213,23,1};
-
-    get_merged.mergeSort(a);
+    insertionSort(a,);
 
     for(auto it:a){
         cout << it <<" ";
