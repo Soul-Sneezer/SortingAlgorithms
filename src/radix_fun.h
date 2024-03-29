@@ -8,9 +8,9 @@ template <typename T1, typename T>
 void radixSort(std::vector<T>& arr , const int bits) {
   std::queue<T> q_zeros, q_ones;
   T1 mask = 1;
-  const int N = arr.size();
+  const long long N = arr.size();
   for (int j = 0; j < bits; j++) {
-    for (int i = 0; i < N; i++) {
+    for (long long i = 0; i < N; i++) {
       auto val = std::bit_cast<T1>(arr[i]);
       val ^= 1 << (bits - 1);
       if (arr[i] < 0)
@@ -23,7 +23,7 @@ void radixSort(std::vector<T>& arr , const int bits) {
       }
     }
 
-    int i = 0;
+    long long i = 0;
     while (!q_zeros.empty()) {
       arr[i++] = q_zeros.front();
       q_zeros.pop();

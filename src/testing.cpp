@@ -56,7 +56,6 @@ template<typename T> bool checkResult(std::vector<T>& orig, std::vector<T>& resu
 	}
 
 	std::sort(orig.begin(), orig.end());
-
 	return orig == result;
 }
 
