@@ -1,10 +1,12 @@
 #include<vector>
 
-template<typename T> static void heapify(T arr[], const int N, const int i)
+using namespace std;
+
+template<typename T> static void heapify(T arr[], const long long N, const long long i)
 {
-	int l = 2 * i + 1;
-	int r = 2 * i + 2;
-	int largest = i;
+	long long l = 2 * i + 1;
+	long long r = 2 * i + 2;
+	long long largest = i;
 
 	if (l < N && arr[l] > arr[largest])
 	{
@@ -24,11 +26,11 @@ template<typename T> static void heapify(T arr[], const int N, const int i)
 
 }
 
-template <typename T> static void heapify(std::vector<T>& v, const int N, const int i)
+template <typename T> static void heapify(std::vector<T>& v, const long long N, const long long i)
 {
-	int l = 2 * i + 1;
-	int r = 2 * i + 2;
-	int largest = i;
+	long long l = 2 * i + 1;
+	long long r = 2 * i + 2;
+	long long largest = i;
 
 	if (l < N && v[l] > v[largest])
 	{
@@ -47,13 +49,13 @@ template <typename T> static void heapify(std::vector<T>& v, const int N, const 
 	}
 }
 
-template <typename T> void heapSort(T arr[], const int N)
+template <typename T> void heapSort(T arr[], const long long N)
 {
-	for (int i = N / 2 - 1; i >= 0; i--)
+	for (long long i = N / 2 - 1; i >= 0; i--)
 	{
 		heapify(arr, N, i);
 	}
-	for (int i = N - 1; i > 0; i--)
+	for (long long i = N - 1; i > 0; i--)
 	{
 		std::swap(arr[0], arr[i]);
 		heapify(arr, i, 0);
@@ -62,13 +64,13 @@ template <typename T> void heapSort(T arr[], const int N)
 
 template <typename T> void heapSort(std::vector<T>& v)
 {
-	int N = v.size();
-	for (int i = N / 2 - 1; i >= 0; i--)
+	long long N = v.size();
+	for (long long i = N / 2 - 1; i >= 0; i--)
 	{
 		heapify(v, N, i);
 	}
 
-	for (int i = N - 1; i > 0; i--)
+	for (long long i = N - 1; i > 0; i--)
 	{
 		std::swap(v[0], v[i]);
 		heapify(v, i, 0);

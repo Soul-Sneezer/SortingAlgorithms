@@ -20,71 +20,81 @@ enum
 	ALGO_DEFAULT,
 };
 
-static void generateRealNumbers(std::vector<double>& v, const int N, const int nrMax)
+static void generateRealNumbers(std::vector<double>& v, const long long N, const long long nrMax)
 {
 	std::random_device rd;  
   std::mt19937 gen(rd()); 
   std::uniform_real_distribution<> dis((double)(-nrMax), (double)nrMax);
-  for (int i = 0; i < N; i++)
+  for (long long i = 0; i < N; i++)
 	{
     v[i] =  dis(gen);
 	}
 }
 
-static void generateNumbers(std::vector<int>& v, const int N, const int nrMax)
+static void generateNumbers(std::vector<long long>& v, const long long N, const long long nrMax)
 {
 	std::random_device rd;
   std::mt19937 gen(rd()); 
   std::uniform_int_distribution<> distr(0, nrMax); 
 
-  for(int i = 0; i < N; i++)
+  for(long long i = 0; i < N; i++)
 	{
     v[i] = distr(gen);
 	}
 }
 
-template<typename T> bool checkResult(std::vector<T>& result, std::unordered_map<T, bool>& orig, const int N)
+template<typename T> bool checkResult(std::vector<T>& orig, std::vector<T>& result, const long long N)
 {
-	for(int i = 0; i < N; i++)
+	if(result.size() != orig.size())
+		return false;
+
+	for(long long i = 1; i < N; i++)
 	{
-		if(orig[result[i]] == false)
-			return false;
-		orig[result[i]] = false;
-	}
-
-	for (const auto & [ key, value ] : orig) 
-	{	
-		if(value == true)
+		if(result[i] < result[i - 1])
 			return false;
 	}
 
-	return true;
+	std::sort(orig.begin(), orig.end());
+
+	return orig == result;
 }
 
-static void runTest(std::ostream& os, const int N, const int nrMax, const int nrAlgo)
+static void runTest(std::ostream& os, const long long N, const long long nrMax, const int nrAlgo, bool def = false, bool rev = false)
 {
 	if(nrAlgo > 6)
 	{
 		os << "Unknown algorithm.";
 		return;
 	}
-	std::vector<int> nrNat(N);
-	std::unordered_map<int, bool> nrNatMap;
+
+	std::vector<long long> nrNat(N);
 	std::vector<double> nrReale(N);
-	std::unordered_map<double, bool> nrRealeMap;
 
-	generateNumbers(nrNat, N, nrMax);
-	for(int i = 0; i < N; i++)
+	if(!def)
 	{
-		nrNatMap[nrNat[i]] = true;
+		generateNumbers(nrNat, N, nrMax);
+		generateRealNumbers(nrReale, N, nrMax);
+	}
+	else
+	{
+		for(long long i = 0; i < N; i++)
+		{
+			if(!rev)
+			{
+				nrNat[i] = i + 1;
+				nrReale[i] = (double)nrNat[i];
+			}
+			else
+			{
+				nrNat[i] = N - i;
+				nrReale[i] = (double)nrNat[i];
+			}
+		}
 	}
 
-	generateRealNumbers(nrReale, N, nrMax);
-	for(int i = 0; i < N; i++)
-	{
-		nrRealeMap[nrReale[i]] = true;
-	}
-
+	std::vector<long long> nrNatCopy= nrNat;
+	std::vector<double> nrRealeCopy= nrReale;
+	
 	auto start = std::chrono::steady_clock::now();
 	switch(nrAlgo)
 	{
@@ -118,12 +128,16 @@ static void runTest(std::ostream& os, const int N, const int nrMax, const int nr
 			os<<"Standard library sort for natural numbers: \n";
 			std::sort(nrNat.begin(), nrNat.end());
 	}
+
 	auto finish = std::chrono::steady_clock::now();
-	if(!checkResult(nrNat, nrNatMap, N))
+	if(!checkResult(nrNatCopy, nrNat, N))
 		os<<"!Test esuat!\n\n";
+	
 	double elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
 	os<<elapsed_seconds<<"\n";
+	
 	start = std::chrono::steady_clock::now();
+	
 	switch(nrAlgo)
 	{
 		case ALGO_HEAP:
@@ -156,9 +170,11 @@ static void runTest(std::ostream& os, const int N, const int nrMax, const int nr
 			os<<"Standard library sort for real numbers: \n";
 			std::sort(nrReale.begin(), nrReale.end());
 	}
+	
 	finish = std::chrono::steady_clock::now();
-	if(!checkResult(nrReale, nrRealeMap, N))
+	if(!checkResult(nrRealeCopy, nrReale, N))
 		os<<"!Test esuat!\n\n";
+	
 	elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
 	os<< elapsed_seconds<<"\n";
 }
@@ -168,19 +184,19 @@ void runTests(const char* inputFile, const char* outputFile = NULL, bool generat
 	std::ifstream in(inputFile);
 	std::ofstream out(outputFile);
 
-	int T, N, nrMax;
+	long long T, N, nrMax;
 	if(generate) // asta inseamna ca generam noi valori cand pornim testele
 	{
 		in >> T;
-		for(int i = 0; i < T; i++)		// T e numarul de teste
+		for(long long i = 0; i < T; i++)		// T e numarul de teste
 		{
 			in >> N;
 			in >> nrMax;
 		
 			if(outputFile == NULL)
-				std::cout<<"Test "<<i<<".	"<<N<<" numere;	"<<nrMax<<" valoarea maxima\n";
+				std::cout<<"Test "<<i<<".	"<<N<<" numbers;	"<<nrMax<<" maximum value\n";
 			else
-				out<<"Test "<<i<<".	"<<N<<" numere;	"<<nrMax<<" valoarea maxima\n";
+				out<<"Test "<<i<<".	"<<N<<" numbers;	"<<nrMax<<" maximum value\n";
 
 			for(int j = 0; j < 7; j++)
 			{
@@ -189,6 +205,32 @@ void runTests(const char* inputFile, const char* outputFile = NULL, bool generat
 				else
 					runTest(std::cout, N, nrMax, j);
 			}
+		}
+
+		if(outputFile == NULL)
+			std::cout<<"Test for an already sorted list. "<<N<<" numbers\n";
+		else
+			out<<"Test for an already sorted list. "<<N<<" numbers\n";
+
+		for(int j = 0; j < 7; j++)
+		{
+			if(outputFile != NULL)
+				runTest(out, N, nrMax, j, true);
+			else
+				runTest(std::cout, N, nrMax, j, true);
+		}
+
+		if(outputFile == NULL)
+			std::cout<<"Test for a list that is already sorted in reverse order. "<<N<<" numbers\n";
+		else
+			out<<"Test for a list that is already sorted in reverse order. "<<N<<" numbers\n";
+
+		for(int j = 0; j < 7; j++)
+		{
+			if(outputFile != NULL)
+				runTest(out, N, nrMax, j, true, true);
+			else
+				runTest(std::cout, N, nrMax, j, true, true);
 		}
 	}
 	else // pentru fisiere cu valori pregenerate
