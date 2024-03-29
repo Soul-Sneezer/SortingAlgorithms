@@ -3,14 +3,15 @@
 //
 #include<iostream>
 #include "Merge_sort.h"
+#include "Tim_sort.h"
 
 using namespace std;
 
 int main(){
 
-    vector<double> a = {10,32,42,51,321.23,4213.43,4,412,321.43,4,123,4213.45,23,1};
+    vector<double> a = {10,32,42,51,321.34,4213,4.2,412,321.36,4.1,123,4213,23,1};
 
-    insertionSort(a,);
+    timSort(a);
 
     for(auto it:a){
         cout << it <<" ";
