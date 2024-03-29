@@ -8,6 +8,7 @@
 #include "shell_fun.h"
 #include "merge_sort.h"
 #include "tim_sort.h"
+#include "radix_fun.h"
 
 enum
 {
@@ -119,11 +120,11 @@ static void runTest(std::ostream& os, const long long N, const long long nrMax, 
 			os<<"Bucket sort for natural numbers:\n";
 			bucketSort(nrNat);
 			break;
+			*/
 		case ALGO_RADIX:
 			os<<"Radix sort for natural numbers:\n";
-			radixSort(nrNat);
+			radixSort<long long, long long>(nrNat, 64);
 			break;
-			*/
 		case ALGO_DEFAULT:
 			os<<"Standard library sort for natural numbers: \n";
 			std::sort(nrNat.begin(), nrNat.end());
@@ -161,11 +162,11 @@ static void runTest(std::ostream& os, const long long N, const long long nrMax, 
 			os<<"Bucket sort for real numbers:\n";
 			bucketSort(nrReale);
 			break;
+			*/
 		case ALGO_RADIX:
 			os<<"Radix sort for real numbers:\n";
-			radixSort(nrReale);
+			radixSort<long long>(nrReale, 64);
 			break;
-			*/
 		case ALGO_DEFAULT:
 			os<<"Standard library sort for real numbers: \n";
 			std::sort(nrReale.begin(), nrReale.end());
