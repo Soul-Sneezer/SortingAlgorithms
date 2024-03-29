@@ -54,18 +54,6 @@ void merge_tim(std::vector<T>& arr, long long l, long long m, long long r) {
     }
 }
 
-int calculateRunSize(long long n) {
-
-    if (n < 2){
-        return 1;
-    }
-
-    int log2n = std::log2(n);
-    long long maxPowerOf2 = std::pow(2, log2n);
-
-    return maxPowerOf2;
-}
-
 template<typename T>
 void timSort(std::vector<T>& arr) {
 
